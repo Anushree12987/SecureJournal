@@ -1,0 +1,137 @@
+@page "/Entries"
+
+<div class="entries-page">
+
+    <!-- Page Header -->
+    <div class="entries-header">
+        <h1> Journal Entries</h1>
+        <p>Browse, create, and reflect on your past thoughts</p>
+        <button class="add-entry-btn" @onclick="() => creatingNewEntry = true">+ New Entry</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="entries-filters">
+        <input type="text" placeholder="Search by title or content..." @bind="searchQuery" />
+        <select @bind="filterMood">
+            <option value="">All Moods</option>
+            <option value="Happy">Happy</option>
+            <option value="Calm">Calm</option>
+            <option value="Neutral">Neutral</option>
+            <option value="Stressed">Stressed</option>
+            <option value="Sad">Sad</option>
+        </select>
+    </div>
+
+    <!-- New Entry Form -->
+    @if (creatingNewEntry)
+    {
+        <div class="entry-card new-entry-card">
+            <div class="entry-date">
+                <span class="day">@newEntry.Date.Day</span>
+                <span class="month">@newEntry.Date.ToString("MMM").ToUpper()</span>
+            </div>
+            <div class="entry-content">
+                <input type="text" @bind="newEntry.Title" placeholder="Title" />
+                <select @bind="newEntry.Mood">
+                    <option value="Happy">Happy</option>
+                    <option value="Calm">Calm</option>
+                    <option value="Neutral">Neutral</option>
+                    <option value="Stressed">Stressed</option>
+                    <option value="Sad">Sad</option>
+                </select>
+                <textarea @bind="newEntry.Content" placeholder="Write your thoughts here..."></textarea>
+                <div class="entry-actions">
+                    <button @onclick="SaveNewEntry">Save</button>
+                    <button class="delete" @onclick="CancelNewEntry">Cancel</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Entries List -->
+    <div class="entries-list">
+        @foreach (var entry in FilteredEntries)
+        {
+            <div class="entry-card">
+                <div class="entry-date">
+                    <span class="day">@entry.Date.Day</span>
+                    <span class="month">@entry.Date.ToString("MMM").ToUpper()</span>
+                </div>
+
+                <div class="entry-content">
+                    <h3>@entry.Title</h3>
+                    <span class="mood @entry.Mood.ToLower()">@entry.Mood</span>
+                    <p>@entry.Content</p>
+                    <div class="entry-actions">
+                        <button @onclick="() => EditEntry(entry)">Edit</button>
+                        <button class="delete" @onclick="() => DeleteEntry(entry)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    string searchQuery = "";
+    string filterMood = "";
+
+    bool creatingNewEntry = false;
+    JournalEntry newEntry = new JournalEntry { Date = DateTime.Now, Mood = "Neutral" };
+
+    List<JournalEntry> entries = new List<JournalEntry>
+    {
+        new JournalEntry{ Date = DateTime.Now, Title="A Peaceful Day", Mood="Happy", Content="Today was productive and calm..." },
+        new JournalEntry{ Date = DateTime.Now.AddDays(-1), Title="Overwhelmed but Hopeful", Mood="Stressed", Content="Deadlines were tight, but I managed..." }
+    };
+
+    IEnumerable<JournalEntry> FilteredEntries =>
+        entries.Where(e =>
+            (string.IsNullOrEmpty(searchQuery) || e.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) || e.Content.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(filterMood) || e.Mood == filterMood)
+        );
+
+    void SaveNewEntry()
+    {
+        entries.Insert(0, new JournalEntry
+        {
+            Date = newEntry.Date,
+            Title = newEntry.Title,
+            Mood = newEntry.Mood,
+            Content = newEntry.Content
+        });
+        newEntry = new JournalEntry { Date = DateTime.Now, Mood = "Neutral" };
+        creatingNewEntry = false;
+    }
+
+    void CancelNewEntry()
+    {
+        creatingNewEntry = false;
+    }
+
+    void EditEntry(JournalEntry entry)
+    {
+        newEntry = new JournalEntry
+        {
+            Date = entry.Date,
+            Title = entry.Title,
+            Mood = entry.Mood,
+            Content = entry.Content
+        };
+        creatingNewEntry = true;
+        entries.Remove(entry); // remove old entry while editing
+    }
+
+    void DeleteEntry(JournalEntry entry)
+    {
+        entries.Remove(entry);
+    }
+
+    class JournalEntry
+    {
+        public DateTime Date { get; set; }
+        public string Title { get; set; } = "";
+        public string Mood { get; set; } = "Neutral";
+        public string Content { get; set; } = "";
+    }
+}
