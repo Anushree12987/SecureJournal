@@ -1,24 +1,49 @@
-@page "/Settings"
+@page "/settings"
+@using SecureJournal.Services
+@using SecureJournal.Models
+@layout EmptyLayout
+@inject SecurityService SecurityService
 
-<div class="settings-page">
-    <h1> Settings</h1>
+<h3>Settings</h3>
 
-    <div class="settings-card">
-        <h3>Security</h3>
-        <input type="password" placeholder="Change PIN" />
-        <button>Update PIN</button>
-    </div>
+<h4>Change Password</h4>
+<input type="password" placeholder="New Password" @bind="NewPassword" />
+<button @onclick="ChangePassword">Save</button>
 
-    <div class="settings-card">
-        <h3>Appearance</h3>
-        <label class="toggle">
-            <input type="checkbox" />
-            <span>Enable Dark Mode</span>
-        </label>
-    </div>
+<h4>Themes</h4>
+<select @bind="SelectedTheme">
+    <option value="Light">Light</option>
+    <option value="Dark">Dark</option>
+</select>
+<button @onclick="ApplyTheme">Apply</button>
 
-    <div class="settings-card">
-        <h3>Data</h3>
-        <button class="secondary">Export Journal (PDF)</button>
-    </div>
-</div>
+@code {
+    private string NewPassword;
+    private string SelectedTheme = "Light";
+
+    // You must define the current logged-in username
+    // Replace this with actual logged-in username from your app
+    private string currentUsername = "user1";
+
+    private void ChangePassword()
+    {
+        // Call the SecurityService's ChangePassword method
+        bool success = SecurityService.ChangePassword(currentUsername, NewPassword);
+
+        if (success)
+        {
+            Console.WriteLine("Password changed successfully!");
+        }
+        else
+        {
+            Console.WriteLine("Failed to change password.");
+        }
+
+        NewPassword = ""; // Clear the input
+    }
+
+    private void ApplyTheme()
+    {
+        // Logic to apply theme (CSS / Blazor CSS classes)
+    }
+}

@@ -1,0 +1,26 @@
+@page "/"
+@using SecureJournal.Models
+@layout EmptyLayout
+@inject JournalService JournalService
+
+<h3>Dashboard</h3>
+
+<p>Welcome to your Secure Journal!</p>
+
+<h4>Recent Entries</h4>
+<ul>
+    @foreach (var entry in RecentEntries)
+    {
+        <EntryCard Entry="@entry" />
+    }
+</ul>
+
+@code {
+    private List<JournalEntry> RecentEntries = new();
+
+    protected override void OnInitialized()
+    {
+        // Get the last 5 journal entries
+        RecentEntries = JournalService.GetRecentEntries(5);
+    }
+}

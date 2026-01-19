@@ -1,0 +1,35 @@
+@page "/calendar"
+@using SecureJournal.Models
+@layout EmptyLayout
+@inject JournalService JournalService
+
+<h3>Calendar View</h3>
+
+<p>View your journal entries by date.</p>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Title</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var entry in Entries)
+    {
+        <tr>
+            <td>@entry.EntryDate.ToShortDateString()</td>
+            <td>@entry.Title</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private List<JournalEntry> Entries = new();
+
+    protected override void OnInitialized()
+    {
+        Entries = JournalService.GetEntries();
+    }
+}

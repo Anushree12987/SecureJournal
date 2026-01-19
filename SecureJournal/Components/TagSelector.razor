@@ -1,0 +1,47 @@
+@using SecureJournal
+@using SecureJournal.Services
+@using SecureJournal.ViewModels
+@using Microsoft.AspNetCore.Components
+@inject JournalService JournalService
+
+
+<div class="tag-selector">
+    <label>Select Tags:</label>
+    <select multiple @bind="SelectedTags" class="form-select">
+        @foreach (var tag in PredefinedTags)
+        {
+            <option value="@tag">@tag</option>
+        }
+    </select>
+
+    <input placeholder="Add custom tag" @bind="NewTag" class="form-control mt-2"/>
+    <button class="btn btn-primary mt-1" @onclick="AddCustomTag">Add Tag</button>
+</div>
+
+@code {
+    [Parameter] public List<string> SelectedTags { get; set; } = new();
+    [Parameter] public EventCallback<List<string>> SelectedTagsChanged { get; set; }
+
+    private string NewTag { get; set; }
+
+    private List<string> PredefinedTags = new()
+    {
+        "Work", "Career", "Studies", "Family", "Friends",
+        "Health", "Fitness", "Personal Growth", "Self-care",
+        "Hobbies", "Travel", "Nature", "Finance", "Spirituality",
+        "Birthday", "Holiday", "Vacation", "Celebration",
+        "Exercise", "Reading", "Writing", "Cooking",
+        "Meditation", "Yoga", "Music", "Shopping", "Parenting",
+        "Projects", "Planning", "Reflection"
+    };
+
+    private void AddCustomTag()
+    {
+        if (!string.IsNullOrWhiteSpace(NewTag) && !SelectedTags.Contains(NewTag))
+        {
+            SelectedTags.Add(NewTag);
+            NewTag = string.Empty;
+            SelectedTagsChanged.InvokeAsync(SelectedTags);
+        }
+    }
+}

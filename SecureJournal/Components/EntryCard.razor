@@ -1,0 +1,27 @@
+@using SecureJournal.Models
+@using SecureJournal.Models
+@using Microsoft.AspNetCore.Components
+@inject JournalService JournalService
+
+
+<div class="card mb-2 p-2 border">
+    <h5>@Entry.Title</h5>
+    <p>@Entry.Content</p>
+    <small>
+        <strong>Date:</strong> @Entry.EntryDate.ToShortDateString() |
+        <strong>Mood:</strong> @Entry.PrimaryMoodName
+    </small>
+    <div class="tags mt-1">
+        @if (Entry.Tags != null)
+        {
+            @foreach (var tag in Entry.Tags)
+            {
+                <span class="badge bg-secondary me-1">@tag</span>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public JournalEntry Entry { get; set; }
+}

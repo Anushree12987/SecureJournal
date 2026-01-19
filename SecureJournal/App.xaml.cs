@@ -1,4 +1,7 @@
-﻿namespace SecureJournal;
+﻿using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+
+namespace SecureJournal;
 
 public partial class App : Application
 {

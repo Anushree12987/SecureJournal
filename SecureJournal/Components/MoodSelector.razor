@@ -1,0 +1,40 @@
+@using SecureJournal
+@using SecureJournal.Services
+@using SecureJournal.ViewModels
+@inject JournalService JournalService
+
+
+@using Microsoft.AspNetCore.Components
+
+<div class="mood-selector">
+    <label>Primary Mood:</label>
+    <select @bind="PrimaryMood" class="form-select">
+        @foreach (var mood in AllMoods)
+        {
+            <option value="@mood">@mood</option>
+        }
+    </select>
+
+    <label>Secondary Moods (optional):</label>
+    <select multiple @bind="SecondaryMoods" class="form-select">
+        @foreach (var mood in AllMoods)
+        {
+            <option value="@mood">@mood</option>
+        }
+    </select>
+</div>
+
+@code {
+    [Parameter] public string PrimaryMood { get; set; }
+    [Parameter] public EventCallback<string> PrimaryMoodChanged { get; set; }
+
+    [Parameter] public List<string> SecondaryMoods { get; set; } = new();
+    [Parameter] public EventCallback<List<string>> SecondaryMoodsChanged { get; set; }
+
+    private List<string> AllMoods = new()
+    {
+        "Happy", "Excited", "Relaxed", "Grateful", "Confident",
+        "Calm", "Thoughtful", "Curious", "Nostalgic", "Bored",
+        "Sad", "Angry", "Stressed", "Lonely", "Anxious"
+    };
+}

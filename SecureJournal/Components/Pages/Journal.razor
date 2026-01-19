@@ -1,0 +1,36 @@
+@page "/journal"
+@using SecureJournal.Models
+@layout EmptyLayout
+@inject JournalService JournalService
+
+<h3>Create/Edit Journal Entry</h3>
+
+<input placeholder="Title" @bind="Entry.Title" class="form-control" />
+<textarea placeholder="Write your thoughts..." @bind="Entry.Content" class="form-control mt-2"></textarea>
+
+<label>Mood:</label>
+<select @bind="Entry.MoodId" class="form-control">
+    <option value="">Select Mood</option>
+    @foreach (var mood in Moods)
+    {
+        <option value="@mood.Id">@mood.Name</option>
+    }
+</select>
+
+<button class="btn btn-primary mt-2" @onclick="SaveEntry">Save Entry</button>
+
+@code {
+    private JournalEntry Entry = new JournalEntry();
+    private List<Mood> Moods = new();
+
+    protected override void OnInitialized()
+    {
+        Moods = JournalService.GetMoods();
+    }
+
+    private void SaveEntry()
+    {
+        JournalService.SaveEntry(Entry);
+        Entry = new JournalEntry(); // Reset form
+    }
+}

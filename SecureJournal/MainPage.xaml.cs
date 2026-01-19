@@ -1,4 +1,6 @@
-﻿namespace SecureJournal;
+﻿using Microsoft.Maui.Controls;
+
+namespace SecureJournal;
 
 public partial class MainPage : ContentPage
 {

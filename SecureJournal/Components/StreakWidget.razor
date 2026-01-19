@@ -1,0 +1,19 @@
+@using SecureJournal
+@using SecureJournal.Services
+@using SecureJournal.ViewModels
+@using Microsoft.AspNetCore.Components
+@inject JournalService JournalService
+
+
+<div class="streak-widget border p-2 rounded">
+    <h5>Journal Streaks</h5>
+    <p><strong>Current Streak:</strong> @CurrentStreak days</p>
+    <p><strong>Longest Streak:</strong> @LongestStreak days</p>
+    <p><strong>Missed Days:</strong> @MissedDays days</p>
+</div>
+
+@code {
+    [Parameter] public int CurrentStreak { get; set; }
+    [Parameter] public int LongestStreak { get; set; }
+    [Parameter] public int MissedDays { get; set; }
+}

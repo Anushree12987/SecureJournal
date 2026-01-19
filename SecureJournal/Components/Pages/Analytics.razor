@@ -1,0 +1,44 @@
+@page "/analytics"
+@layout EmptyLayout
+@using SecureJournal.Models
+@using SecureJournal.Services
+@inject AnalyticsService AnalyticsService
+@inject JournalService JournalService
+@inject ExportService ExportService
+
+<h3>Analytics</h3>
+
+<p>Word Trends (Avg Words per Day)</p>
+<ul>
+    @foreach (var wt in WordTrends)
+    {
+        <li>@wt.Date.ToShortDateString() : @wt.AvgWords words</li>
+    }
+</ul>
+
+<h4>Most Used Tags</h4>
+<ul>
+    @foreach (var tag in MostUsedTags)
+    {
+        <li>@tag.Key : @tag.Value</li>
+    }
+</ul>
+
+<button @onclick="ExportPdf">Export PDF</button>
+
+@code {
+    private List<(DateTime Date, int AvgWords)> WordTrends = new();
+    private Dictionary<string, int> MostUsedTags = new();
+
+    protected override void OnInitialized()
+    {
+        WordTrends = AnalyticsService.WordTrend();
+        MostUsedTags = AnalyticsService.MostUsedTags();
+    }
+
+    private void ExportPdf()
+    {
+        var entries = JournalService.GetEntries();
+        ExportService.ExportToPdf(entries, "journal_export.txt"); // Replace with PDF in real project
+    }
+}
